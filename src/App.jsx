@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash";
 import "./App.css";
 import useFetchQuery from "./hook/useFetchQuery";
 import {
@@ -6,8 +7,7 @@ import {
   getNegara,
   getPelabuhan,
 } from "./services/APIService";
-import { useEffect, useState } from "react";
-import { isEmpty } from "lodash";
+import { useState } from "react";
 
 function App() {
   const [negara, setNegara] = useState("");
@@ -56,24 +56,36 @@ function App() {
     setPelabuhan(e.target.value);
   };
 
-  const handlerSuggestBarang = (text) => {
-    setBarang(text);
+  const handlerHarga = (e) => {
+    const tambah = (Number(e.target.value) * Number()) / 100;
+    setResult(tambah);
   };
 
   const handlerInputBarang = (e) => {
     setQueryBarang(e.target.value);
-    setBarang(e.target.value);
-  };
-
-  const handlerSuggestBeaCukai = (text) => {
-    setCukai(text);
-    const tambah = (Number(harga) * Number(text)) / 100;
-    setResult(tambah);
-  };
-
-  const handlerInputBeaCukai = (e) => {
     setQueryCukai(e.target.value);
-    setCukai(e.target.value);
+  };
+
+  const DetailBarang = () => {
+    return dataBarang?.data?.map((item) => (
+      <input
+        className="inputForm"
+        type="text"
+        value={item.sub_header + " " + item.uraian_id}
+        disabled
+      />
+    ));
+  };
+
+  const DetailBeaCukai = () => {
+    return dataBeaCukai?.data?.map((item) => (
+      <input
+        className="inputForm"
+        type="text"
+        value={item.bm + " %"}
+        disabled
+      />
+    ));
   };
 
   const rupiah = (number) => {
@@ -130,25 +142,14 @@ function App() {
       <div className="section">
         <div>
           <label htmlFor="">Barang: </label>
-          <input type="text" className="inputForm" />
-        </div>
-        <div className="section">
           <input
-            className="inputForm"
             type="text"
-            value={barang}
+            className="inputForm"
             onChange={(e) => handlerInputBarang(e)}
           />
         </div>
-        <div>
-          {dataBarang?.data?.map((item, index) => (
-            <div
-              onClick={() => handlerSuggestBarang(item.uraian_id)}
-              key={index}
-            >
-              {barang ? item.uraian_id : ""}
-            </div>
-          ))}
+        <div className="section">
+          <DetailBarang />
         </div>
       </div>
       <div className="section">
@@ -158,27 +159,16 @@ function App() {
             className="inputForm"
             type="text"
             value={harga}
-            onChange={(e) => setHarga(e.target.value)}
+            onChange={(e) => handlerHarga(e)}
           />
         </div>
       </div>
       <div className="section">
         <div>
           <label htmlFor="">Tarif Bea Masuk: </label>
-          <input
-            className="inputForm"
-            type="text"
-            value={cukai}
-            onChange={(e) => handlerInputBeaCukai(e)}
-          />
+          <DetailBeaCukai />
         </div>
-        <div>
-          {dataBeaCukai?.data?.map((item, index) => (
-            <div onClick={() => handlerSuggestBeaCukai(item.bm)} key={index}>
-              {cukai ? item.bm : ""}
-            </div>
-          ))}
-        </div>
+
         <div className="section">
           <input
             className="inputForm"
